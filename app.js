@@ -1,3 +1,5 @@
+let img = new Image();
+img.src = 'https://orig15.deviantart.net/8bed/f/2015/058/a/8/smb1_background_by_steamerthesteamtrain-d8jq7ea.png';
 
 const canvasGame = {
   canvasBox: document.getElementById('canvas'),
@@ -8,85 +10,108 @@ const canvasGame = {
     this.canvas.height = 500;
     this.ctx = this.canvas.getContext("2d");
     canvas.insertBefore(this.canvas, this.canvasBox.childNodes[0]);
-    this.interval = setInterval(updateGameArea, 20);
   },
   clear: function () {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
 
-
-// canvas movement animation
-
 canvasGame.start();
 
+const backgroundImage = {
+  img: img,
+  x: 0,
+  speed: -1,
+
+  move: function() {
+    this.x += this.speed;
+    this.x %= canvas.width;
+  },
+
+  draw: function() {
+    canvasGame.ctx.drawImage(this.img, this.x, 0);
+    if (this.speed < 0) {
+      canvasGame.ctx.drawImage(this.img, this.x + canvas.width, 0);
+    } else {
+      canvasGame.ctx.drawImage(this.img, this.x - this.img.width, 0);
+    }
+  },
+};
 // 
 class Player {
   constructor(x, y, health, dmg) {
     this.x = x;
     this.y = y;
     this.vx = 1;
-    this.width = 20;
-    this.height = 20;
-    this.edgeRegion = 50;
-    this.spriteX = 0;
-    this.speedX = 0;
     this.health = health;
     this.dmg = dmg;
-    this.animateTime = 2;
-    this.animateCur = 0;
-    this.moving = false;
-    this.animatePos = [0, 42, 84, 42, 0, 128, 170, 128];
+    this.speedX = 0;
+
   }
 
   drawPlayer() {
-    var charImg = new Image();
-    charImg.onload = function () {
-      charReady = true;
-    };
-    charImg.src = 'images/nes_mega_man_x_by_bonermang_d8f6gew.png';
-    canvasGame.ctx.drawImage(charImage)
+    canvasGame.ctx.fillRect(this.x, this.y, 36, 36);
   }
   update() {
-    canvasGame.ctx.fillStyle = 'red';
-    canvasGame.ctx.fillRect(this.x, this.y, 100, 100);
+    let car = document.querySelector('#car')
+    canvasGame.ctx.fillRect(this.x, this.y, 36, 36);
   }
   movement() {
     if (this.x + this.speedX <= 0) {
       this.x -= this.speedX;
+    } else if (this.x + this.speedX > 750) {
+      this.x -= this.speedX;
     }
     this.x += this.speedX
   }
-
-  atack1() {
-    return this.dmg;
-  }
-  atack2() {
-    return this.dmg * 2;
-  }
-
-  heal() {
-
-  }
-
-  receiveDmg(dmg) {
-
-  }
-
 }
 
 // let's see if your need to extend the player to create this 
-class Enemie {
-  constructor(x, y, health, dmg) {
+class Enemy {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.health = 50;
+    this.dmg = 20;
+    this.width = 30;
+    this.height = 30;
+  }
 
+  attack() {
+    return this.dmg
+  }
+  takeDmg(dmg) {
+    this.health -= dmg; 
+  }
+  updateEnemy() {
+    canvasGame.ctx.fillRect(this.x, this.y, 36, 36);
   }
 }
 
-let player = new Player(50, 320, 150, 50);
+let player = new Player(50, 300, 100, 50);
+
+
+var myObstacles = [];
+
+function updateObstacles() {
+  for (let i = 0; i < myObstacles.length; i++) {
+    myObstacles[i].x += 1;
+    console.log(myObstacles[i]);
+    myObstacles[i].updateEnemy();
+  }
+
+  gameCanvas.frames += 1;
+  if (gameCanvas.frames % 30 === 0) {
+    myObstacles.push(new Enemy(850, 300));
+  }
+  requestAnimationFrame(updateObstacles);
+}
 
 // game update requesting set interval
 function updateGameArea() {
+  backgroundImage.move();
   canvasGame.clear();
+  backgroundImage.draw();
   player.movement();
   player.update();
 }
@@ -96,20 +121,14 @@ document.onkeydown = function (e) {
   switch (e.keyCode) {
     case 37: // left arrow
       player.speedX -= player.vx;
-      player.moving = true
       break;
     case 39: // right arrow
       player.speedX += player.vx;
-      player.moving = true
       break;
   }
 };
 
 document.onkeyup = function (e) {
   player.speedX = 0;
-  player.moving = false;
 };
 
-
-let imgTest = new Image();
-imgTest.src = "images/nes_mega_man_x_by_bonermang_d8f6gew.png";
