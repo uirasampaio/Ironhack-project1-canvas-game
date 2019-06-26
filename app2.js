@@ -4,7 +4,7 @@ const canvasGame = {
   canvasBox: document.getElementById('canvas'),
   canvas: document.createElement('canvas'),
   frames: 0,
-  maxEnemies: 2,
+  maxEnemies: 3,
   pause: false,
   start() {
     this.canvas.width = 600;
@@ -91,7 +91,42 @@ class Player {
   // draw the player based on his position
   render() {
     canvasGame.ctx.beginPath();
-    canvasGame.ctx.fillStyle = 'black';
+    canvasGame.ctx.fillStyle = '#d3c3c3';
+    canvasGame.ctx.rect(20, 30, 140, 12);
+    canvasGame.ctx.fill();
+    canvasGame.ctx.closePath();
+
+    canvasGame.ctx.beginPath();
+    canvasGame.ctx.strokeStyle = 'black';
+    canvasGame.ctx.rect(20, 30, 140, 12);
+    canvasGame.ctx.stroke();
+    canvasGame.ctx.closePath();
+
+    if (this.chargedShot === false) {
+      canvasGame.ctx.beginPath();
+      canvasGame.ctx.strokeStyle = 'black';
+      canvasGame.ctx.rect(24, 32, this.charge * 33, 6);
+      canvasGame.ctx.stroke();
+      canvasGame.ctx.fillStyle = 'blue';
+      canvasGame.ctx.rect(24, 32, this.charge * 33, 5);
+      canvasGame.ctx.fill();
+      canvasGame.ctx.closePath();
+    } else {
+      canvasGame.ctx.save();
+      canvasGame.ctx.beginPath();
+      canvasGame.ctx.shadowColor = 'lightblue';
+      canvasGame.ctx.shadowOffsetX = 0;
+      canvasGame.ctx.shadowOffsetY = 0;
+      canvasGame.ctx.shadowBlur = 15;
+      canvasGame.ctx.fillStyle = 'blue';
+      canvasGame.ctx.rect(24, 32, 4 * 33, 8);
+      canvasGame.ctx.fill();
+      canvasGame.ctx.closePath();
+      canvasGame.ctx.restore();
+    }
+
+    canvasGame.ctx.beginPath();
+    canvasGame.ctx.fillStyle = '#d3c3c3';
     canvasGame.ctx.rect(5, 5, 140, 24);
     canvasGame.ctx.fill();
     canvasGame.ctx.closePath();
@@ -103,11 +138,25 @@ class Player {
     canvasGame.ctx.stroke();
     canvasGame.ctx.closePath();
 
-    canvasGame.ctx.beginPath();
-    canvasGame.ctx.fillStyle = '#f3e5e5';
-    canvasGame.ctx.rect(20, 9, this.health * 1.2 + 1, 16);
-    canvasGame.ctx.fill();
-    canvasGame.ctx.closePath();
+    if (this.health >= 30) {
+      canvasGame.ctx.beginPath();
+      canvasGame.ctx.fillStyle = 'darkgreen';
+      canvasGame.ctx.rect(20, 9, this.health * 1.2 + 1, 16);
+      canvasGame.ctx.fill();
+      canvasGame.ctx.closePath();
+    } else {
+      canvasGame.ctx.save();
+      canvasGame.ctx.beginPath();
+      canvasGame.ctx.shadowColor = 'red';
+      canvasGame.ctx.shadowOffsetX = 0;
+      canvasGame.ctx.shadowOffsetY = 0;
+      canvasGame.ctx.shadowBlur = 15;
+      canvasGame.ctx.fillStyle = 'red';
+      canvasGame.ctx.rect(20, 9, this.health * 1.2 + 1, 16);
+      canvasGame.ctx.fill();
+      canvasGame.ctx.closePath();
+      canvasGame.ctx.restore();
+    }
 
     canvasGame.ctx.beginPath();
     canvasGame.ctx.font = 'bold 18px Verdana';
@@ -117,17 +166,25 @@ class Player {
     canvasGame.ctx.closePath();
 
     canvasGame.ctx.beginPath();
-    canvasGame.ctx.fillStyle = 'blue';
-    canvasGame.ctx.font = 'italic bold 18px Verdana';
-    canvasGame.ctx.fillText('X', 14, 24);
+    canvasGame.ctx.fillStyle = 'white';
+    canvasGame.ctx.font = 'italic bold 26px Verdana';
+    canvasGame.ctx.fillText('X', 10, 26);
     canvasGame.ctx.font = 'italic bold 14px Verdana';
     canvasGame.ctx.fillText('Alpha Game Footage', 420, 290);
-    canvasGame.ctx.font = 'italic bold 20px Verdana';
-    canvasGame.ctx.strokeStyle = 'yellow';
-    canvasGame.ctx.strokeText('X', 14, 24);
+    canvasGame.ctx.font = 'italic bold 27px Verdana';
+    canvasGame.ctx.strokeStyle = 'black';
+    canvasGame.ctx.strokeText('X', 10, 26);
     canvasGame.ctx.closePath();
 
-    if (this.right === true && this.down === true) {
+    if (this.jumping === true && this.right === true) {
+      const jumping = new Image();
+      jumping.src = 'images/jumping.png';
+      this.characterAnimation(jumping);
+    } else if (this.jumping === true && this.left === true) {
+      const jumping2 = new Image();
+      jumping2.src = 'images/jumping2.png';
+      this.characterAnimation(jumping2);
+    } else if (this.right === true && this.down === true) {
       const characterDown = new Image();
       characterDown.src = 'images/knee.png';
       canvasGame.ctx.drawImage(
@@ -214,7 +271,7 @@ class Player {
       this.health = this.health - 25;
       this.x -= 1;
       this.damageInterval = true;
-      setTimeout(() => this.damageInterval = false, 500);
+      setTimeout(() => this.damageInterval = false, 800);
     }
   }
 
@@ -246,36 +303,60 @@ class Player {
 let enemies = [];
 
 class Enemy {
-  constructor(x, y) {
+  constructor(x, y, directionOfMov) {
     this.x = x;
     this.y = y;
     this.health = 100;
     this.dmg = 25;
     this.width = 55;
     this.height = 57;
-    this.frames = 0;
+    this.direction = directionOfMov;
+    this.widthScale = this.width * 0.8;
+    this.heightScale = this.height * 0.8;
   }
 
   updateEnemy() {
-    this.frames += 1;
     let monster = new Image();
-    monster.src = 'images/monter1.png';
-    canvasGame.ctx.drawImage(
-      monster,
-      this.width * 0,
-      0,
-      this.width,
-      this.height,
-      this.x,
-      this.y,
-      this.width,
-      this.height,
-    );
+    if (this.direction === 'right') {
+      monster.src = 'images/monter1.png';
+      canvasGame.ctx.drawImage(
+        monster,
+        this.width * 0,
+        0,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.widthScale,
+        this.heightScale,
+      );
+    } else {
+      monster.src = 'images/monter2.png';
+      if (this.direction === 'right') {
+        monster.src = 'images/monter1.png';
+        canvasGame.ctx.drawImage(
+          monster,
+          this.width * 0,
+          0,
+          this.width,
+          this.height,
+          this.x,
+          this.y,
+          this.widthScale,
+          this.heightScale,
+        );
+      }
+    }
   }
 
   takeDamage(dmgOutput) {
-    this.health -= 25 * dmgOutput;
-    this.x += 10;
+    if (this.direction === 'right') {
+      this.health -= 25 * dmgOutput;
+      this.x += 10;
+    } else {
+      this.health -= 25 * dmgOutput;
+      this.x -= 10;
+    }
   }
 
   playerPositionRight() {
@@ -293,6 +374,17 @@ class Enemy {
   crashWith(shot) {
     return !(this.playerPositionRight() < shot.shotPositionLeft()
       || this.playerPositionLeft() > shot.shotPositionRight());
+  }
+}
+
+class Boss extends Enemy {
+  constructor(x, y) {
+    super(x, y);
+    this.health = 100;
+    this.dmg = 25;
+    this.width = 55;
+    this.height = 57;
+    this.frames = 0;
   }
 }
 
@@ -315,9 +407,11 @@ function updateEnemies() {
   }
 
   canvasGame.frames += 1;
-  if (enemies.length < canvasGame.maxEnemies) {
+  if (canvasGame.frames >= 1400) {
+    backgroundImage.speed = 0;
+  } else if (enemies.length < canvasGame.maxEnemies) {
     if (canvasGame.frames % 250 === 0) {
-      enemies.push(new Enemy(900, 200));
+      enemies.push(new Enemy(900, 200, 'right'));
     }
   }
 }
@@ -334,18 +428,12 @@ let laserArr = [];
 
 function checkCrash() {
   enemies.forEach((item) => {
-    const test = laserArr.some((dmg, idx) => {
+    laserArr.some((dmg, idx) => {
       if (item.crashWith(dmg)) {
+        item.takeDamage(laserArr[idx].charge);
         laserArr.splice(idx, 1);
-        return item.crashWith(dmg);
       }
     });
-    if (test) {
-      if (player.chargedShot) {
-        item.takeDamage(4);
-      }
-      item.takeDamage(1);
-    }
   });
 }
 
@@ -403,10 +491,6 @@ class Shot {
 
   shotPositionLeft() {
     return this.x;
-  }
-
-  montersHit() {
-    this.charge -= 1;
   }
 
   characterAnimation(drawThis) {
@@ -505,7 +589,7 @@ document.onkeydown = function (e) {
       if (player.chargedShot && player.gunReload) {
         player.chargedShot = false;
         laserArr.push(new BigShot(player.right));
-        setTimeout(() => player.chargedShot = false, 1200);
+        setTimeout(() => player.chargedShot = false, 1500);
       } else if (player.gunReload) {
         laserArr.push(new Shot(player.right));
         player.gunReload = false;
@@ -533,7 +617,7 @@ document.onkeyup = function (e) {
 let player = new Player(50, 202, 100, 50);
 
 // will start the game
-const btn = document.querySelector('.btn');
+const btn = document.querySelector('#primary');
 const gameStart = document.querySelector('.initial');
 btn.addEventListener('click', () => {
   canvasGame.start();

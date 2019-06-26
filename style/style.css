@@ -7,9 +7,14 @@ body {
   display: flex;
   justify-content: center;
 }
-
-#nav {
+#brand {
+  height: 30px;
+}
+.container > #nav {
   margin-bottom: 50px;
+  background-color: darkblue;
+  color: white;
+  font-weight: 700;
 }
 canvas {
   border: 1px solid black;
@@ -32,6 +37,7 @@ canvas {
   background-image: url(../images/backgroundgame.jpg);
   background-size: cover;
   flex-direction: column;
+  box-shadow: 0px 12px 13px 0px rgba(0, 0, 0, 0.75);
 }
 .btn {
   margin: 20px auto;
@@ -42,8 +48,18 @@ canvas {
   box-shadow: 1px 12px 11px 1px rgba(0, 0, 0, 0.75);
   text-transform: uppercase;
   font-weight: 700;
+  background-color: blue;
 }
-
+#reset {
+  background-color: blue;
+  text-transform: uppercase;
+  font-weight: 700;
+  box-shadow: 1px 12px 11px 1px rgba(0, 0, 0, 0.75);
+  width: 150px;
+  height: 50px;
+  color: white;
+  font-weight: 900;
+}
 #box {
   display: flex;
   flex-direction: column;
@@ -55,6 +71,13 @@ canvas {
   height: 25%;
   padding-bottom: 130px;
   margin: 0px auto;
+}
+.game-over {
+  background-image: url(../images/Game-Over.png);
+  width: 62%;
+  height: 25%;
+  background-size: cover;
+  margin: 40px auto;
 }
 .modal {
   display: none; /* Hidden by default */
@@ -77,4 +100,11 @@ canvas {
   justify-content: center;
   margin: auto;
   width: 80%;
+  -webkit-border-radius: 64px 64px 64px 64px;
+  border: 10px solid #676ca6;
+}
+.modal-content {
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: 700;
 }

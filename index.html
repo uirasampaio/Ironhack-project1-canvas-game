@@ -14,8 +14,8 @@
     />
   </head>
   <body class="container">
-    <nav id="nav" class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Arcade Quest</a>
+    <nav id="nav" class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="#"><img id="brand" src="images/Arcade-Quest.png" alt=""></a>
       <button
         class="navbar-toggler"
         type="button"
@@ -47,14 +47,15 @@
       <!-- modal stuff -->
       <div id="myModal" class="modal">
         <div id="mine" class="modal-content">
+          <div class="game-over"></div>
           <p class="modal-text"></p>
-          <button type="button" class="reset">Play Again</button>
+          <button id="reset" type="button" class="reset btn brn-primary">Play Again</button>
         </div>
       </div>
       <!--Game Starter -->
       <div class="initial">
         <div id="title"></div>
-        <button type="button" class="btn btn-primary">start</button>
+        <button id="primary" type="button" class="btn btn-primary">start</button>
       </div>
       <div id="canvas"></div>
     </main>
