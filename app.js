@@ -5,7 +5,6 @@ const canvasGame = {
   canvas: document.createElement('canvas'),
   frames: 0,
   maxEnemies: 2,
-  pause: false,
   start() {
     this.canvas.width = 600;
     this.canvas.height = 300;
@@ -69,8 +68,6 @@ class Player {
     this.jumping = false;
     this.vy = 0;
     this.score = 0;
-    this.chargedShot = false;
-    this.charge = 0;
   }
 
   // Used to draw animations with no modification on the x or y axis
@@ -176,13 +173,6 @@ class Player {
 
   // update the movement and enforce boundarie to the left
   update() {
-    if (this.charge >= 4) {
-      this.chargedShot = true;
-      this.charge = 0;
-    } else if (this.chargedShot === true) {
-      this.charge = 0;
-    }
-
     this.vy += 1;
     this.y += this.vy;
     this.vy *= 0.9;
@@ -273,8 +263,8 @@ class Enemy {
     );
   }
 
-  takeDamage(dmgOutput) {
-    this.health -= 25 * dmgOutput;
+  takeDamage() {
+    this.health -= 25;
     this.x += 10;
   }
 
@@ -307,9 +297,9 @@ function updateEnemies() {
 
   for (let i = 0; i < enemies.length; i += 1) {
     if (enemies[i].x < player.x) {
-      enemies[i].x += 1;
+      enemies[i].x += 2;
     } else if (enemies[i].x > player.x) {
-      enemies[i].x -= 1;
+      enemies[i].x -= 2;
     }
     enemies[i].updateEnemy();
   }
@@ -318,7 +308,7 @@ function updateEnemies() {
   if (enemies.length < canvasGame.maxEnemies) {
     if (canvasGame.frames % 250 === 0) {
       enemies.push(new Enemy(900, 200));
-    }
+    } 
   }
 }
 
@@ -341,10 +331,7 @@ function checkCrash() {
       }
     });
     if (test) {
-      if (player.chargedShot) {
-        item.takeDamage(4);
-      }
-      item.takeDamage(1);
+      item.takeDamage();
     }
   });
 }
@@ -358,8 +345,6 @@ class Shot {
     this.width = 32;
     this.height = 27;
     this.frames = 0;
-    this.shotScale = this.width * 1;
-    this.ShotWidth = this.height * 1;
   }
 
   update() {
@@ -374,8 +359,8 @@ class Shot {
         this.height,
         this.x,
         this.y,
-        this.shotScale,
-        this.ShotWidth,
+        this.width,
+        this.height,
       );
     } else {
       attackPattern.src = 'images/hadouken-left.png';
@@ -387,14 +372,15 @@ class Shot {
         this.height,
         this.x - 64,
         this.y,
-        this.shotScale,
-        this.ShotWidth,
+        this.width,
+        this.height,
       );
     }
 
     if (this.frames >= 3) {
       this.frames = 0;
     }
+
   }
 
   shotPositionRight() {
@@ -424,21 +410,6 @@ class Shot {
   }
 }
 
-class BigShot extends Shot {
-  constructor(side) {
-    super(side)
-    this.x = player.x + 54;
-    this.y = player.y - 25;
-    this.trajectorie = side;
-    this.charge = 4;
-    this.width = 32;
-    this.height = 27;
-    this.frames = 0;
-    this.shotScale = this.width * 3;
-    this.ShotWidth = this.height * 3;
-  }
-}
-
 function updateShot() {
   laserArr.forEach((shot, idx) => {
     shot.update();
@@ -447,9 +418,9 @@ function updateShot() {
       laserArr.splice(idx, 1);
     }
     if (shot.trajectorie === true) {
-      shot.x += 4;
+      shot.x += 3;
     } else {
-      shot.x -= 4;
+      shot.x -= 3;
     }
 
     if (shot.x > player.x + 300 || shot.x < player.x - 300) {
@@ -502,25 +473,12 @@ document.onkeydown = function (e) {
     case 32: // space-bar
       player.down = false;
       player.attack = true;
-      if (player.chargedShot && player.gunReload) {
-        player.chargedShot = false;
-        laserArr.push(new BigShot(player.right));
-        setTimeout(() => player.chargedShot = false, 1200);
-      } else if (player.gunReload) {
+      if (player.gunReload) {
         laserArr.push(new Shot(player.right));
         player.gunReload = false;
         setTimeout(() => player.gunReload = true, 800);
-        player.charge += 1;
       }
       break;
-    case 13: // pause;
-      if (canvasGame.pause === false) {
-        canvasGame.stop();
-        canvasGame.pause = true
-      } else {
-        canvasGame.start();
-        canvasGame.pause = false;
-      }
   }
 };
 

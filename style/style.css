@@ -1,24 +1,80 @@
 body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 #canvas {
-    margin: 10px auto;
-    height: 400px;
-    width: 800px;
+  display: flex;
+  justify-content: center;
 }
 
 #nav {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 canvas {
-    border: 1px solid black;
+  border: 1px solid black;
 }
 
 #hidden {
-    display: none;
+  display: none;
 }
 #charImg {
-    display: hidden;
+  display: hidden;
 }
 
+/* initial Screen and start button */
+.initial {
+  height: 400px;
+  width: 100%;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  background-image: url(../images/backgroundgame.jpg);
+  background-size: cover;
+  flex-direction: column;
+}
+.btn {
+  margin: 20px auto;
+  width: 120px;
+  height: 40px;
+  border-radius: 22px 22px 22px 22px;
+  border: 4px solid #000000;
+  box-shadow: 1px 12px 11px 1px rgba(0, 0, 0, 0.75);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+#box {
+  display: flex;
+  flex-direction: column;
+}
+#title {
+  background-image: url(../images/Arcade-Quest.png);
+  background-size: cover;
+  width: 94%;
+  height: 25%;
+  padding-bottom: 130px;
+  margin: 0px auto;
+}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  outline: 0;
+}
+#mine {
+  height: 50%;
+  margin: auto;
+  width: 50%;
+  align-items: center;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 80%;
+}
