@@ -272,6 +272,17 @@ function checkCrash() {
   });
 }
 
+function checkBossCrash() {
+  bossArr.forEach((item) => {
+    shotsArray.some((dmg, idx) => {
+      if (item.crashWith(dmg)) {
+        item.takeDamage(shotsArray[idx].charge);
+        shotsArray.splice(idx, 1);
+      }
+    });
+  });
+}
+
 class Shot {
   constructor(side) {
     this.x = player.x;
@@ -398,3 +409,9 @@ function updateShot() {
     }
   });
 }
+
+const playerElements = () => {
+  updateShot();
+  checkBossCrash();
+  checkCrash();
+};

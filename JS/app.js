@@ -61,8 +61,7 @@ function gameLoop() {
   player.render();
   player.update();
   enemiesUpdate();
-  updateShot();
-  checkCrash();
+  playerElements();
   updateMap();
 }
 
@@ -158,6 +157,7 @@ btn.addEventListener('click', () => {
     enemies = [];
     player = new Player(50, 202, 100, 50);
     shotsArray = [];
+    canvasGame.boss = false;
   }, true);
 }());
 

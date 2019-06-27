@@ -1,4 +1,5 @@
 let enemies = [];
+let bossArr = [];
 let enemiesProjectiles = [];
 
 class Enemy {
@@ -99,28 +100,95 @@ class Enemy {
 class Boss extends Enemy {
   constructor(x, y, directionOfMov, bullet) {
     super(x, y, directionOfMov, bullet);
+    this.x = x;
+    this.y = y;
+    this.vx = 2;
     this.health = 1000;
-    this.width = 55;
-    this.height = 57;
-    this.frames = 0;
+    this.width = 140;
+    this.height = 143;
+    this.direction = directionOfMov;
+    this.widthScale = this.width * 1.1;
+    this.heightScale = this.height * 1.1;
+    this.bullet = bullet;
+    this.maxShots = 1;
+    this.type = 'normal';
+    this.reloadShot = true;
+    this.moveUpCooldown = false;
+    this.attackOneCooldown = false;
   }
 
-  update() {
-    const boss = new Image();
-    attackPattern.src = './images/hadouken.png';
+  takeDamage(dmgOutput) {
+    this.health -= 25 * dmgOutput;
+    const dmgImg = new Image();
+    dmgImg.src = './images/visual-dmg.png';
+
     canvasGame.ctx.drawImage(
-      attackPattern,
-      this.width * this.frames,
+      dmgImg,
+      this.width * 0,
       0,
       this.width,
       this.height,
-      this.x + 20,
-      this.y + 5,
-      this.shotScale,
-      this.ShotWidth,
+      this.x - 10,
+      this.y - 20,
+      this.width * 3,
+      this.height * 3,
     );
   }
+
+  updateEnemy() {
+    canvasGame.ctx.beginPath();
+    canvasGame.ctx.fillStyle = 'black';
+    canvasGame.ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
+    canvasGame.ctx.fill();
+  }
+
+  positionX() {
+    return this.x;
+  }
+
+  attackOne() {
+    if (this.attackOneCooldown === true) return;
+
+    if (darkBullet.x > 100) {
+      this.x -= this.vx;
+    }
+  }
+
+  attackReturn() {
+    if (darkBullet.x < 530) {
+      this.x += this.vx;
+    }
+  }
+
+  crashWith(shot) {
+    const getDistance = () => {
+      const xDistance = (shot.positionX() - this.x);
+      const yDistance = (shot.positionY() - this.y);
+      return Math.sqrt((xDistance ** 2) + (yDistance ** 2));
+    };
+    if (getDistance() < this.width || getDistance() < this.scaleHeight) {
+      return true;
+    }
+    return false;
+  }
 }
+
+let darkBullet = new Boss(650, 200, 'right', true);
+
+const controlBoss = () => {
+  if (canvasGame.boss === false) return;
+  darkBullet.updateEnemy();
+  bossArr.push(darkBullet);
+  if (darkBullet.health > 750) {
+    if (darkBullet.attackOneCooldown === false) {
+      darkBullet.attackOne();
+      setTimeout(() => darkBullet.attackOneCooldown = true, 4000);
+    } else if (darkBullet.attackOneCooldown === true) {
+      darkBullet.attackReturn();
+      setTimeout(() => darkBullet.attackOneCooldown = false, 7000);
+    }
+  }
+};
 
 class EnemyShot {
   constructor(x, y, directionOfMov) {
@@ -228,18 +296,23 @@ function enemiesMovement() {
     enemies[i].updateEnemy();
   }
 
-  if (canvasGame.boss === false && enemies.length < canvasGame.maxEnemies) {
-    if (canvasGame.frames % 100 === 0) {
-      enemies.push(new Enemy(900, 210, 'right', false));
-      enemies.push(new Enemy(-200, 210, 'left', false));
-      enemies.push(new Enemy(-200, 130, 'left', true));
+  if (player.score >= 2000) {
+    setTimeout(() => canvasGame.boss === true, 1500);
+
+  } else if (canvasGame.boss === false && enemies.length < canvasGame.maxEnemies) {
+    if (canvasGame.frames % 300 === 0) {
+      /* enemies.push(new Enemy(900, 210, 'right', false));
+       enemies.push(new Enemy(-200, 210, 'left', false));
+       enemies.push(new Enemy(-200, 130, 'left', true)); */
     }
   }
 }
 
 function checkGameOver() {
   enemies.some(dmg => player.crashWith(dmg));
+  bossArr.some(dmg => player.crashWith(dmg));
 }
+
 
 const enemiesUpdate = () => {
   enemiesMovement();
@@ -247,4 +320,5 @@ const enemiesUpdate = () => {
   createBullet();
   updateBullet();
   playerHit();
+  controlBoss();
 };
