@@ -211,8 +211,6 @@ class Player {
   }
 
   receiveDamage(dmgTrajectory) {
-    const damage = new Image();
-    damage.src = './images/damage.png';
     if (this.checkGameOver()) {
       restart();
     }
@@ -236,22 +234,18 @@ class Player {
     return (this.health <= 0);
   }
 
-  playerPositionRight() {
-    return this.x + this.width;
-  }
-
-  playerPositionLeft() {
+  positionX() {
     return this.x;
   }
 
-  playerPositionY() {
-    return this.y + this.height;
+  positionY() {
+    return this.scaleHeight;
   }
 
   crashWith(enemies) {
     const getDistance = () => {
-      let xDistance = (enemies.enemyPositionRight() - this.x);
-      let yDistance = (enemies.enemyPositionY() - this.y);
+      let xDistance = (enemies.positionX() - this.x);
+      let yDistance = (enemies.positionY() - this.y);
       return Math.sqrt((xDistance ** 2) + (yDistance ** 2));
     };
 
@@ -326,34 +320,16 @@ class Shot {
     }
   }
 
-  shotPositionX() {
+  positionX() {
     return this.x;
-  }
-
-  shotPositionXleft() {
-    return this.x - this.width;
   }
 
   shotWidth() {
     return this.width;
   }
 
-  shotPositionY() {
+  positionY() {
     return this.y;
-  }
-
-  characterAnimation(drawThis) {
-    canvasGame.ctx.drawImage(
-      drawThis,
-      this.width * this.frames,
-      0,
-      this.width,
-      this.height,
-      this.x,
-      this.y,
-      this.scaleWidth,
-      this.scaleHeight,
-    );
   }
 }
 
@@ -411,9 +387,6 @@ function updateShot() {
   shotsArray.forEach((shot, idx) => {
     shot.update();
     shot.frames += 1;
-    if (shot.charge <= 0) {
-      shotsArray.splice(idx, 1);
-    }
     if (shot.trajectorie === true) {
       shot.x += 4;
     } else {

@@ -4,18 +4,22 @@ const canvasGame = {
   frames: 0,
   maxEnemies: 1,
   pause: false,
+  boss: false,
+  backgroundMusic: new SoundFactory('./sounds/Mega-Man-X-(SNES)-Music-Spark-Mandrill.mp3'),
   start() {
     this.canvas.width = 600;
     this.canvas.height = 300;
     this.ctx = this.canvas.getContext('2d');
     canvas.insertBefore(this.canvas, this.canvasBox.childNodes[0]);
     interval = setInterval(gameLoop, 20);
+    this.backgroundMusic.play();
   },
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
   stop() {
     clearInterval(interval);
+    this.backgroundMusic.stop();
   },
 };
 
@@ -25,7 +29,7 @@ bgTest.src = './images/super-mario-background-images-5632345.jpg';
 const backgroundImage = {
   img: bgTest,
   x: 0,
-  speed: -0.5,
+  speed: 0,
 
   move() {
     this.x += this.speed;
@@ -41,7 +45,14 @@ const backgroundImage = {
     }
   },
 };
-
+function updateMap() {
+  canvasGame.frames += 1;
+  if (canvasGame.frames > 800 && canvasGame.frames < 1200) {
+    backgroundImage.speed = -0.5;
+  } else if (canvasGame.frames >= 2200) {
+    backgroundImage.speed = 0;
+  }
+}
 
 function gameLoop() {
   canvasGame.clear();
@@ -49,14 +60,14 @@ function gameLoop() {
   backgroundImage.move();
   player.render();
   player.update();
-  updateEnemies();
-  checkGameOver();
+  enemiesUpdate();
   updateShot();
   checkCrash();
+  updateMap();
 }
 
 
-document.onkeydown = function (e) {
+document.onkeydown = function coder(e) {
   switch (e.keyCode) {
     case 37: // left arrow
       player.x -= player.vx;
@@ -96,9 +107,13 @@ document.onkeydown = function (e) {
       player.attack = true;
       if (player.chargedShot && player.gunReload) {
         player.chargedShot = false;
+        const mySound = new SoundFactory('./sounds/buster-shot.mp3')
+        mySound.play();
         shotsArray.push(new BigShot(player.right));
         setTimeout(() => player.chargedShot = false, 1500);
       } else if (player.gunReload) {
+        const mySound = new SoundFactory('./sounds/mega-man-2-SFX-(shot).wav');
+        mySound.play();
         shotsArray.push(new Shot(player.right));
         player.gunReload = false;
         setTimeout(() => player.gunReload = true, 800);
@@ -108,15 +123,17 @@ document.onkeydown = function (e) {
     case 13: // pause;
       if (canvasGame.pause === false) {
         canvasGame.stop();
-        canvasGame.pause = true
+        canvasGame.pause = true;
       } else {
         canvasGame.start();
         canvasGame.pause = false;
       }
+      break;
+    default:
   }
 };
 
-document.onkeyup = function (e) {
+document.onkeyup = function ofCoder (e) {
   player.speedX = 0;
   player.frames = 0;
   player.update();
