@@ -14,7 +14,8 @@
     />
   </head>
   <body class="container">
-    <nav id="nav" class="navbar navbar-expand-lg">
+    <!-- Nav bar-->
+    <nav id="nav" class="navbar navbar-expand-lg text-white">
       <a class="navbar-brand" href="#"><img id="brand" src="images/Arcade-Quest.png" alt=""></a>
       <button
         class="navbar-toggler"
@@ -35,7 +36,7 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Tips</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Leaderboard</a>
@@ -47,7 +48,7 @@
       <!-- modal stuff -->
       <div id="myModal" class="modal">
         <div id="mine" class="modal-content">
-          <div class="game-over"></div>
+          <div class="game-over"><img src="images/Game-Over.png" alt=""></div>
           <p class="modal-text"></p>
           <button id="reset" type="button" class="reset btn brn-primary">Play Again</button>
         </div>
@@ -57,9 +58,12 @@
         <div id="title"></div>
         <button id="primary" type="button" class="btn btn-primary">start</button>
       </div>
+      <!-- Canvas -->
       <div id="canvas"></div>
     </main>
-    <script src="app2.js"></script>
+    <script src="JS/app.js"></script>
+    <script src="JS/player.js"></script>
+    <script src="JS/monsters.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
