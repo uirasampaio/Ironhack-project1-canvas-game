@@ -180,4 +180,8 @@ const stageClear = () => {
   img.setAttribute('src', './images/stage-clear.png');
   resetBtn.textContent = 'Next Stage';
   canvasGame.canvasBox.innerHTML = '';
+  const modalRestart = document.querySelector('#myModal');
+  const modaltext = document.querySelector('.modal-text');
+  modaltext.textContent = `your score is: ${player.score}`;
+  modalRestart.setAttribute("style", "display: flex");
 };
