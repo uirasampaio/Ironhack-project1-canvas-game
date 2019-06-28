@@ -1,6 +1,4 @@
-// main Canvas star and stop functions
-
-// change to player js archive
+let damageSound = new SoundFactory('./sounds/mega-man-dmg.wav');
 
 class Player {
   constructor(x, y, health, dmg) {
@@ -216,6 +214,7 @@ class Player {
     }
 
     if (!this.damageInterval) {
+      damageSound.play();
       if (dmgTrajectory === 'right') {
         this.x -= 30;
         this.health = this.health - 25;
@@ -255,6 +254,19 @@ class Player {
     }
     return false;
   }
+
+  crashWithBoss(boss) {
+    const getDistance = () => {
+      let xDistance = (boss.positionX() - this.x);
+      let yDistance = (boss.positionY() - this.y);
+      return Math.sqrt((xDistance ** 2) + (yDistance ** 2));
+    };
+    if (getDistance() < this.scaleWidth || getDistance() < this.scaleHeight) {
+      this.receiveDamage(boss.direction);
+      return true;
+    }
+    return false;
+  }
 }
 
 let player = new Player(50, 202, 100, 50);
@@ -273,13 +285,12 @@ function checkCrash() {
 }
 
 function checkBossCrash() {
-  bossArr.forEach((item) => {
-    shotsArray.some((dmg, idx) => {
-      if (item.crashWith(dmg)) {
-        item.takeDamage(shotsArray[idx].charge);
-        shotsArray.splice(idx, 1);
-      }
-    });
+  shotsArray.forEach((dmg, idx) => {
+    if (eggMan.crashWith(dmg)) {
+      eggMan.takeDamage(shotsArray[idx].charge);
+      shotsArray.splice(idx, 1);
+
+    }
   });
 }
 

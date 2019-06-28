@@ -1,6 +1,6 @@
 let enemies = [];
-let bossArr = [];
 let enemiesProjectiles = [];
+let bossProjectiles = [];
 
 class Enemy {
   constructor(x, y, directionOfMov, bullet) {
@@ -63,6 +63,8 @@ class Enemy {
   }
 
   takeDamage(dmgOutput) {
+    let enemieDamageSound = new SoundFactory('./sounds/enemie-dmg.wav');
+    enemieDamageSound.play();
     if (this.direction === 'right') {
       this.health -= 25 * dmgOutput;
       this.x += 20;
@@ -111,13 +113,15 @@ class Boss extends Enemy {
     this.heightScale = this.height * 1.1;
     this.bullet = bullet;
     this.maxShots = 1;
-    this.type = 'normal';
+    this.type = 'boss';
     this.reloadShot = true;
     this.moveUpCooldown = false;
     this.attackOneCooldown = false;
   }
 
   takeDamage(dmgOutput) {
+    let bossDamageSound = new SoundFactory('./sounds/boss-take-damage.wav');
+    bossDamageSound.play();
     this.health -= 25 * dmgOutput;
     const dmgImg = new Image();
     dmgImg.src = './images/visual-dmg.png';
@@ -133,13 +137,34 @@ class Boss extends Enemy {
       this.width * 3,
       this.height * 3,
     );
+
+    canvasGame.ctx.drawImage(
+      dmgImg,
+      this.width * 0,
+      0,
+      this.width,
+      this.height,
+      this.x + 5,
+      this.y - 10,
+      this.width * 3,
+      this.height * 3,
+    );
   }
 
   updateEnemy() {
-    canvasGame.ctx.beginPath();
-    canvasGame.ctx.fillStyle = 'black';
-    canvasGame.ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
-    canvasGame.ctx.fill();
+    const dmgImg = new Image();
+    dmgImg.src = './images/boss.png';
+    canvasGame.ctx.drawImage(
+      dmgImg,
+      this.width * 0,
+      0,
+      this.width,
+      this.height,
+      this.x + 5,
+      this.y - 10,
+      this.width * 1.6,
+      this.height * 1.6,
+    );
   }
 
   positionX() {
@@ -149,15 +174,19 @@ class Boss extends Enemy {
   attackOne() {
     if (this.attackOneCooldown === true) return;
 
-    if (darkBullet.x > 100) {
+    if (eggMan.x > 100) {
       this.x -= this.vx;
     }
   }
 
   attackReturn() {
-    if (darkBullet.x < 530) {
+    if (eggMan.x < 530) {
       this.x += this.vx;
     }
+  }
+
+  checkGameOver() {
+    return (this.health <= 0);
   }
 
   crashWith(shot) {
@@ -173,50 +202,83 @@ class Boss extends Enemy {
   }
 }
 
-let darkBullet = new Boss(650, 200, 'right', true);
+let eggMan = new Boss(700, 200, 'right', true);
 
 const controlBoss = () => {
   if (canvasGame.boss === false) return;
-  darkBullet.updateEnemy();
-  bossArr.push(darkBullet);
-  if (darkBullet.health > 750) {
-    if (darkBullet.attackOneCooldown === false) {
-      darkBullet.attackOne();
-      setTimeout(() => darkBullet.attackOneCooldown = true, 4000);
-    } else if (darkBullet.attackOneCooldown === true) {
-      darkBullet.attackReturn();
-      setTimeout(() => darkBullet.attackOneCooldown = false, 7000);
+  if (eggMan.checkGameOver()) {
+    stageClear();
+  }
+  eggMan.updateEnemy();
+
+  if (eggMan.health > 650) {
+    if (eggMan.attackOneCooldown === false) {
+      eggMan.attackOne();
+      setTimeout(() => eggMan.attackOneCooldown = true, 4000);
+    } else if (eggMan.attackOneCooldown === true) {
+      eggMan.attackReturn();
+      setTimeout(() => eggMan.attackOneCooldown = false, 7000);
+    }
+  } else if (eggMan.bullet < 300) {
+    eggMan.vx = 3;
+    if (eggMan.attackOneCooldown === false) {
+      eggMan.attackOne();
+      setTimeout(() => eggMan.attackOneCooldown = true, 4000);
+    } else if (eggMan.attackOneCooldown === true) {
+      eggMan.attackReturn();
+      setTimeout(() => eggMan.attackOneCooldown = false, 7000);
     }
   }
 };
 
 class EnemyShot {
-  constructor(x, y, directionOfMov) {
+  constructor(x, y, directionOfMov, mType) {
     this.x = x;
     this.y = y;
     this.width = 32;
-    this.height = 27;
+    this.height = 32;
     this.frames = 0;
     this.shotScale = this.width * 1;
     this.ShotWidth = this.height * 1;
     this.direction = directionOfMov;
+    this.monsterType = mType;
   }
 
   update() {
-    this.y += 1;
     const attackPattern = new Image();
-    attackPattern.src = './images/monster-attack-pattern.png';
-    canvasGame.ctx.drawImage(
-      attackPattern,
-      this.width * this.frames,
-      0,
-      this.width,
-      this.height,
-      this.x + 20,
-      this.y + 5,
-      this.shotScale,
-      this.ShotWidth,
-    );
+    if (this.monsterType === 'boss') {
+      this.x -= 2;
+      attackPattern.src = './images/boss-atack.png';
+      canvasGame.ctx.save();
+      canvasGame.ctx.drawImage(
+        attackPattern,
+        this.width * this.frames,
+        0,
+        this.width,
+        this.height,
+        this.x,
+        this.y - 20,
+        this.width * 0.8,
+        this.height * 0.8,
+      );
+
+      canvasGame.ctx.restore();
+    } else {
+      this.y += 1;
+      const attackPattern = new Image();
+      attackPattern.src = './images/monster-attack-pattern.png';
+      canvasGame.ctx.drawImage(
+        attackPattern,
+        this.width * this.frames,
+        0,
+        this.width,
+        this.height,
+        this.x + 20,
+        this.y + 5,
+        this.shotScale,
+        this.ShotWidth,
+      );
+    }
   }
 
   positionX() {
@@ -241,7 +303,7 @@ function createBullet() {
     };
     if (monster.bullet === true && getDistance() < monster.y + player.positionY()) {
       if (monster.reloadShot) {
-        enemiesProjectiles.push(new EnemyShot(monster.x, monster.y, monster.direction));
+        enemiesProjectiles.push(new EnemyShot(monster.x, monster.y, monster.direction, 'normal'));
         monster.reloadShot = false;
         setTimeout(() => monster.reloadShot = true, 3000);
       }
@@ -281,9 +343,9 @@ function enemiesMovement() {
   for (let i = 0; i < enemies.length; i += 1) {
     if (enemies[i].bullet === true) {
       if (enemies[i].x < player.x) {
-        enemies[i].x += 0.4;
+        enemies[i].x += 0.5;
       } else if (enemies[i].x > player.x) {
-        enemies[i].x -= 0.4;
+        enemies[i].x -= 0.5;
       }
     } else if (enemies[i].bullet === false) {
       if (enemies[i].x < player.x) {
@@ -296,21 +358,22 @@ function enemiesMovement() {
     enemies[i].updateEnemy();
   }
 
-  if (player.score >= 2000) {
-    setTimeout(() => canvasGame.boss === true, 1500);
+  if (player.score >= 1500) {
+    setTimeout(() => canvasGame.boss = true, 2000);
 
   } else if (canvasGame.boss === false && enemies.length < canvasGame.maxEnemies) {
     if (canvasGame.frames % 300 === 0) {
-      /* enemies.push(new Enemy(900, 210, 'right', false));
-       enemies.push(new Enemy(-200, 210, 'left', false));
-       enemies.push(new Enemy(-200, 130, 'left', true)); */
+      enemies.push(new Enemy(900, 210, 'right', false));
+      enemies.push(new Enemy(-200, 210, 'left', false));
+      enemies.push(new Enemy(-200, 130, 'left', true));
+      enemies.push(new Enemy(-500, 130, 'left', true))
     }
   }
 }
 
 function checkGameOver() {
   enemies.some(dmg => player.crashWith(dmg));
-  bossArr.some(dmg => player.crashWith(dmg));
+  player.crashWithBoss(eggMan);
 }
 
 

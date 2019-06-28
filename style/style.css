@@ -81,15 +81,15 @@ canvas {
 }
 /* modal */
 .modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1; 
+  display: none;
+  position: fixed;
+  z-index: 99;
   left: 0;
   top: 0;
-  height: 100%; 
-  overflow: auto; 
+  height: 100%;
+  overflow: auto;
   background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4); 
+  background-color: rgba(0, 0, 0, 0.4);
   outline: 0;
 }
 #mine {
@@ -108,4 +108,26 @@ canvas {
   font-size: 2em;
   text-transform: uppercase;
   font-weight: 700;
+}
+
+/* other modal */
+.controls {
+  display: none;
+  height: 200px;
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+}
+
+.card-group p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  color: blue;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.controls #card-one .card-img-top,
+.controls #card-two .card-img-top {
+  width: 60%;
 }

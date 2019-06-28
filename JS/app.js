@@ -2,7 +2,7 @@ const canvasGame = {
   canvasBox: document.getElementById('canvas'),
   canvas: document.createElement('canvas'),
   frames: 0,
-  maxEnemies: 1,
+  maxEnemies: 2,
   pause: false,
   boss: false,
   backgroundMusic: new SoundFactory('./sounds/Mega-Man-X-(SNES)-Music-Spark-Mandrill.mp3'),
@@ -137,13 +137,15 @@ document.onkeyup = function ofCoder (e) {
   player.frames = 0;
   player.update();
 };
-
+// start game
+const controls = document.querySelector('.controls');
 const btn = document.querySelector('#primary');
 const gameStart = document.querySelector('.initial');
 btn.addEventListener('click', () => {
   canvasGame.start();
   player.render();
   gameStart.setAttribute("style", "display: none");
+  controls.setAttribute("style", "display: flex");
 }, true);
 
 (function reset() {
@@ -155,8 +157,10 @@ btn.addEventListener('click', () => {
     canvasGame.start();
     player.render();
     enemies = [];
+    enemiesProjectiles = [];
     player = new Player(50, 202, 100, 50);
     shotsArray = [];
+    canvasGame.frames = 0;
     canvasGame.boss = false;
   }, true);
 }());
@@ -168,4 +172,12 @@ const restart = () => {
   const modaltext = document.querySelector('.modal-text');
   modaltext.textContent = `your score is: ${player.score}`;
   modalRestart.setAttribute("style", "display: flex");
+};
+
+const stageClear = () => {
+  const resetBtn = document.querySelector('.reset');
+  const img = document.querySelector('#game-over-img');
+  img.setAttribute('src', './images/stage-clear.png');
+  resetBtn.textContent = 'Next Stage';
+  canvasGame.canvasBox.innerHTML = '';
 };

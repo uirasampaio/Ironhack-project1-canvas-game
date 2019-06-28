@@ -16,9 +16,3 @@ class SoundFactory {
     this.sound.pause();
   }
 }
-
-const getDistance = () => {
-  const xDistance = (player.positionX() - darkBullet.x);
-  const yDistance = (player.positionY() - darkBullet.y);
-  return Math.sqrt((xDistance ** 2) + (yDistance ** 2));
-};
