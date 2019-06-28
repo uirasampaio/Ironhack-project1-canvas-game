@@ -67,11 +67,11 @@ class Player {
     } else {
       canvasGame.ctx.save();
       canvasGame.ctx.beginPath();
-      canvasGame.ctx.shadowColor = 'lightblue';
+      canvasGame.ctx.shadowColor = 'yellow';
       canvasGame.ctx.shadowOffsetX = 0;
       canvasGame.ctx.shadowOffsetY = 0;
       canvasGame.ctx.shadowBlur = 15;
-      canvasGame.ctx.fillStyle = 'blue';
+      canvasGame.ctx.fillStyle = 'rgb(30,107,206)';
       canvasGame.ctx.rect(24, 32, 4 * 33, 8);
       canvasGame.ctx.fill();
       canvasGame.ctx.closePath();
@@ -87,14 +87,14 @@ class Player {
     canvasGame.ctx.beginPath();
     canvasGame.ctx.strokeStyle = 'black';
     canvasGame.ctx.rect(5, 5, 140, 25);
-    canvasGame.ctx.rect(20, 9, 100 * 1.2 + 2, 17);
+    canvasGame.ctx.rect(20, 9, 100 * 1.20, 17);
     canvasGame.ctx.stroke();
     canvasGame.ctx.closePath();
 
     if (this.health >= 30) {
       canvasGame.ctx.beginPath();
       canvasGame.ctx.fillStyle = 'darkgreen';
-      canvasGame.ctx.rect(20, 9, this.health * 1.2 + 1, 16);
+      canvasGame.ctx.rect(20, 9, this.health * 1.20, 16);
       canvasGame.ctx.fill();
       canvasGame.ctx.closePath();
     } else {
@@ -105,7 +105,7 @@ class Player {
       canvasGame.ctx.shadowOffsetY = 0;
       canvasGame.ctx.shadowBlur = 15;
       canvasGame.ctx.fillStyle = 'red';
-      canvasGame.ctx.rect(20, 9, this.health * 1.2 + 1, 16);
+      canvasGame.ctx.rect(20, 9, this.health * 1.20, 16);
       canvasGame.ctx.fill();
       canvasGame.ctx.closePath();
       canvasGame.ctx.restore();
@@ -289,7 +289,6 @@ function checkBossCrash() {
     if (eggMan.crashWith(dmg)) {
       eggMan.takeDamage(shotsArray[idx].charge);
       shotsArray.splice(idx, 1);
-
     }
   });
 }
