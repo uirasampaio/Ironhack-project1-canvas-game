@@ -207,7 +207,10 @@ let eggMan = new Boss(800, 200, 'right', true);
 const controlBoss = () => {
   if (canvasGame.boss === false) return;
   if (eggMan.checkGameOver()) {
+    let eggMan = new Boss(800, 200, 'right', true);
+    canvasGame.boss = false;
     stageClear();
+    return;
   }
   eggMan.updateEnemy();
 
