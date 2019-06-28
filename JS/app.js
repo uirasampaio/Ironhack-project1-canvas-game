@@ -154,6 +154,7 @@ const resetBtn = document.querySelector('.reset');
 canvasGame.canvasBox.innerHTML = '';
 resetBtn.addEventListener('click', () => {
   modalRestart.setAttribute('style', 'display: none');
+  canvasGame.boss = false;
   canvasGame.start();
   player.render();
   enemies = [];
