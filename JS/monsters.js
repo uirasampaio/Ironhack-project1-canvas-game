@@ -202,7 +202,7 @@ class Boss extends Enemy {
   }
 }
 
-let eggMan = new Boss(700, 200, 'right', true);
+let eggMan = new Boss(800, 200, 'right', true);
 
 const controlBoss = () => {
   if (canvasGame.boss === false) return;
@@ -367,6 +367,7 @@ function enemiesMovement() {
       enemies.push(new Enemy(-200, 210, 'left', false));
       enemies.push(new Enemy(-200, 130, 'left', true));
       enemies.push(new Enemy(-500, 130, 'left', true))
+      canvasGame.boss = false;
     }
   }
 }

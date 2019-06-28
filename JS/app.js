@@ -132,7 +132,7 @@ document.onkeydown = function coder(e) {
   }
 };
 
-document.onkeyup = function ofCoder (e) {
+document.onkeyup = function ofCoder(e) {
   player.speedX = 0;
   player.frames = 0;
   player.update();
@@ -148,22 +148,21 @@ btn.addEventListener('click', () => {
   controls.setAttribute("style", "display: flex");
 }, true);
 
-(function reset() {
-  const modalRestart = document.querySelector('#myModal');
-  const resetBtn = document.querySelector('.reset');
-  canvasGame.canvasBox.innerHTML = '';
-  resetBtn.addEventListener('click', () => {
-    modalRestart.setAttribute('style', 'display: none');
-    canvasGame.start();
-    player.render();
-    enemies = [];
-    enemiesProjectiles = [];
-    player = new Player(50, 202, 100, 50);
-    shotsArray = [];
-    canvasGame.frames = 0;
-    canvasGame.boss = false;
-  }, true);
-}());
+
+const modalRestart = document.querySelector('#myModal');
+const resetBtn = document.querySelector('.reset');
+canvasGame.canvasBox.innerHTML = '';
+resetBtn.addEventListener('click', () => {
+  modalRestart.setAttribute('style', 'display: none');
+  canvasGame.start();
+  player.render();
+  enemies = [];
+  enemiesProjectiles = [];
+  player = new Player(50, 202, 100, 50);
+  shotsArray = [];
+  canvasGame.frames = 0;
+}, true);
+
 
 const restart = () => {
   canvasGame.stop();
