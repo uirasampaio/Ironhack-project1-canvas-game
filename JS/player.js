@@ -41,7 +41,7 @@ class Player {
     );
   }
 
-  // draw the player based on his position
+  // draw the player based on his position, draw the hp and shot bar
   render() {
     canvasGame.ctx.beginPath();
     canvasGame.ctx.fillStyle = '#d3c3c3';

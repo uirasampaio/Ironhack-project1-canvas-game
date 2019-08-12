@@ -23,11 +23,11 @@ const canvasGame = {
   },
 };
 
-let bgTest = new Image();
-bgTest.src = './images/super-mario-background-images-5632345.jpg';
+let background = new Image();
+background.src = './images/super-mario-background-images-5632345.jpg';
 
 const backgroundImage = {
-  img: bgTest,
+  img: background,
   x: 0,
   speed: 0,
 
@@ -54,6 +54,7 @@ function updateMap() {
   }
 }
 
+// run the game motor
 function gameLoop() {
   canvasGame.clear();
   backgroundImage.draw();
@@ -65,6 +66,7 @@ function gameLoop() {
   updateMap();
 }
 
+// game controls
 
 document.onkeydown = function coder(e) {
   switch (e.keyCode) {
@@ -168,18 +170,6 @@ resetBtn.addEventListener('click', () => {
 const restart = () => {
   canvasGame.stop();
   canvasGame.clear();
-  const modalRestart = document.querySelector('#myModal');
-  const modaltext = document.querySelector('.modal-text');
-  modaltext.textContent = `your score is: ${player.score}`;
-  modalRestart.setAttribute("style", "display: flex");
-};
-
-const stageClear = () => {
-  const resetBtn = document.querySelector('.reset');
-  const img = document.querySelector('#game-over-img');
-  img.setAttribute('src', './images/stage-clear.png');
-  resetBtn.textContent = 'Next Stage';
-  canvasGame.canvasBox.innerHTML = '';
   const modalRestart = document.querySelector('#myModal');
   const modaltext = document.querySelector('.modal-text');
   modaltext.textContent = `your score is: ${player.score}`;

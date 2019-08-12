@@ -1,6 +1,5 @@
 let enemies = [];
 let enemiesProjectiles = [];
-let bossProjectiles = [];
 
 class Enemy {
   constructor(x, y, directionOfMov, bullet) {
@@ -105,7 +104,7 @@ class Boss extends Enemy {
     this.x = x;
     this.y = y;
     this.vx = 2;
-    this.health = 1000;
+    this.health = 800;
     this.width = 140;
     this.height = 143;
     this.direction = directionOfMov;
@@ -207,9 +206,8 @@ let eggMan = new Boss(800, 200, 'right', true);
 const controlBoss = () => {
   if (canvasGame.boss === false) return;
   if (eggMan.checkGameOver()) {
-    let eggMan = new Boss(800, 200, 'right', true);
     canvasGame.boss = false;
-    stageClear();
+    restart();
     return;
   }
   eggMan.updateEnemy();
